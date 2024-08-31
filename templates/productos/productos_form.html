@@ -1,0 +1,336 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block content %}
+
+    <div class="container mt-5">
+        <div class="row">
+        <div class="col-12 col-md-12">
+            <div class="container m-12">  
+            <div id="estadoFormContainer" style="display: none;">
+                <div class="container">
+                <form id="productoForm" action="" method="POST">
+                    {% csrf_token %}
+                    {% if error %}
+                        <div class="alert alert-danger">
+                            <h2>{{ error }}</h2>
+                        </div>
+                    {% endif %}
+                
+                        <div class="row justify-content-center">
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-header">
+                                        {% if estadoFuncion == 'editar' %}
+                                            <h3 class="mb-0">Editar Producto</h3>
+                                        {% else %}
+                                            <h3 class="mb-0">Agregar Producto</h3>
+                                        {% endif %}
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label for="{{ Productos_Form.cod_producto.id_for_label }}" class="form-label">Código de Producto</label>
+                                                <input type="text" name="{{ Productos_Form.cod_producto.name }}" id="{{ Productos_Form.cod_producto.id_for_label }}" class="form-control" value="{{ Productos_Form.cod_producto.value|default_if_none:'' }}">
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="{{ Productos_Form.nombre.id_for_label }}" class="form-label">Nombre</label>
+                                                <input type="text" name="{{ Productos_Form.nombre.name }}" id="{{ Productos_Form.nombre.id_for_label }}" class="form-control" value="{{ Productos_Form.nombre.value|default_if_none:'' }}">
+                                            </div>
+                                        </div>
+                                    
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label for="{{ Productos_Form.marca.id_for_label }}" class="form-label">Marca</label>
+                                                <input type="text" name="{{ Productos_Form.marca.name }}" id="{{ Productos_Form.marca.id_for_label }}" class="form-control" value="{{ Productos_Form.marca.value|default_if_none:'' }}">
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="{{ Productos_Form.id_cat.id_for_label }}" class="form-label">Categoría</label>
+                                                <select name="{{ Productos_Form.id_cat.name }}" id="{{ Productos_Form.id_cat.id_for_label }}" class="form-control">
+                                                    {% for categoria in categorias %}
+                                                        <option value="{{ categoria.id_cat }}" {% if categoria.id_cat == Productos_Form.id_cat.value %}selected{% endif %}>{{ categoria.nombre }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label for="{{ Productos_Form.stock.id_for_label }}" class="form-label">Stock</label>
+                                                <input type="number" name="{{ Productos_Form.stock.name }}" id="{{ Productos_Form.stock.id_for_label }}" class="form-control" value="{{ Productos_Form.stock.value|default_if_none:'' }}">
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="{{ Productos_Form.stock_min.id_for_label }}" class="form-label">Stock Mínimo</label>
+                                                <input type="number" name="{{ Productos_Form.stock_min.name }}" id="{{ Productos_Form.stock_min.id_for_label }}" class="form-control" value="{{ Productos_Form.stock_min.value|default_if_none:'' }}">
+                                            </div>
+                                        </div>
+                                    
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label for="{{ Productos_Form.stock_max.id_for_label }}" class="form-label">Stock Máximo</label>
+                                                <input type="number" name="{{ Productos_Form.stock_max.name }}" id="{{ Productos_Form.stock_max.id_for_label }}" class="form-control" value="{{ Productos_Form.stock_max.value|default_if_none:'' }}">
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="{{ Productos_Form.precio_venta.id_for_label }}" class="form-label">Precio de Venta</label>
+                                                <input type="number" step="0.01" name="{{ Productos_Form.precio_venta.name }}" id="{{ Productos_Form.precio_venta.id_for_label }}" class="form-control" value="{{ Productos_Form.precio_venta.value|default_if_none:'' }}">
+                                            </div>
+                                        </div>
+                                    
+                                        <div class="form-group text-center">
+                                            <button type="submit" class="btn btn-success">
+                                                {% if estadoFuncion == 'editar' %}
+                                                    Actualizar
+                                                {% else %}
+                                                    Guardar
+                                                {% endif %}
+                                            </button>
+                                            <a href="{% url 'producto_create' %}" class="btn btn-secondary">Cancelar</a>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+            <div class="container mt-5">
+                <div class="row">
+                <div class="col-md-10">
+                    <h2 class="mb-4">Lista de Productos</h2>
+                </div>
+                <div class="col-md-2 text-end d-flex align-items-start">
+                    {% if estadoFuncion == 'editar' %}
+                        <a href="{% url 'producto_create' %}" class="btn btn-secondary">Nuevo Producto</a>
+                    {% elif estadoFuncion == 'crear' %}
+                        <button id="toggleFormButton" class="btn btn-primary mb-3">Agregar Producto</button>
+                    {% endif %}
+                </div> 
+                <div class="col-md-12">
+                    <table class="table table-striped table-hover" style="font-size: 0.875rem;">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%; text-align: center;">Código</th>
+                                <th style="width: 20%; text-align: center;">Nombre</th>
+                                <th style="width: 10%; text-align: center;">Marca</th>
+                                <th style="width: 10%; text-align: center;">Categoría</th>
+                                <th style="width: 10%; text-align: center;">Stock</th>
+                                <th style="width: 10%; text-align: center;">Stock -</th>
+                                <th style="width: 10%; text-align: center;">Stock +</th>
+                                <th style="width: 10%; text-align: center;">P Venta</th>
+                                <th style="width: 20%; text-align: center;">Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for producto in productos %}
+                                <tr>
+                                    <td style="text-align: center;">{{ producto.cod_producto }}</td>
+                                    <td style="text-align: center;">{{ producto.nombre }}</td>
+                                    <td style="text-align: center;">{{ producto.marca }}</td>
+                                    <td style="text-align: center;">
+                                        {% if producto.id_cat %}
+                                            {{ producto.id_cat.nombre }}
+                                        {% else %}
+                                            Sin Categoría
+                                        {% endif %}
+                                    </td>
+                                    <td style="text-align: center;">{{ producto.stock }}</td>
+                                    <td style="text-align: center;">{{ producto.stock_min }}</td>
+                                    <td style="text-align: center;">{{ producto.stock_max }}</td>
+                                    <td style="text-align: center;">${{ producto.precio_venta|floatformat:2|intcomma }}</td>
+                                    <td style="text-align: center;">
+                                        <a href="{% url 'producto_edit' producto.id_producto %}" class="btn btn-primary btn-sm" title="Editar Producto">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{% url 'producto_delete' producto.id_producto %}" method="post" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Eliminar Producto" onclick="return confirm('¿Estás seguro de que deseas eliminar este Producto?');">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="9" style="text-align: center;">No hay productos registrados.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                    
+                    
+                </div> 
+            </div>
+            </div> 
+        </div>
+        </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const formContainer = document.getElementById('estadoFormContainer');
+          const toggleButton = document.getElementById('toggleFormButton');
+          const editButtons = document.querySelectorAll('.editButton');
+    
+          const url = window.location.pathname;
+          if (url.includes('/producto/editar/')) {
+              formContainer.style.display = 'block';
+          }
+          if (url.includes('/producto/nuevo/')) {
+              formContainer.style.display = 'none';
+          }
+          toggleButton.addEventListener('click', function() {
+              if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+                  formContainer.style.display = 'block';
+              } else {
+                  formContainer.style.display = 'none';
+              }
+          });
+    
+          editButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+              event.preventDefault();
+              formContainer.style.display = 'block';
+              const id = this.getAttribute('data-id');
+              window.location.href = `{% url 'producto_edit' 0 %}`.replace('0', id);
+            });
+          });
+        });
+      </script>
+{% endblock %}
+
+
+
+
+
+
+
+<!-- productos/productos_form.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Producto</title>
+    <!-- Incluir los enlaces a Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Opcional: Estilos personalizados -->
+    <style>
+        /* Agrega estilos personalizados aquí */
+        .form-group {
+            margin-bottom: 20px; /* Espacio entre campos */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Crear Producto</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ Productos_Form.id_producto.id_for_label }}">{{ Productos_Form.id_producto.label }}</label>
+                {{ Productos_Form.id_producto }}
+                {% if Productos_Form.id_producto.errors %}
+                    <small class="text-danger">{{ Productos_Form.id_producto.errors }}</small>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ Productos_Form.cod_producto.id_for_label }}">{{ Productos_Form.cod_producto.label }}</label>
+                {{ Productos_Form.cod_producto }}
+                {% if Productos_Form.cod_producto.errors %}
+                    <small class="text-danger">{{ Productos_Form.cod_producto.errors }}</small>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ Productos_Form.nombre.id_for_label }}">{{ Productos_Form.nombre.label }}</label>
+                {{ Productos_Form.nombre }}
+                {% if Productos_Form.nombre.errors %}
+                    <small class="text-danger">{{ Productos_Form.nombre.errors }}</small>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ Productos_Form.marca.id_for_label }}">{{ Productos_Form.marca.label }}</label>
+                {{ Productos_Form.marca }}
+                {% if Productos_Form.marca.errors %}
+                    <small class="text-danger">{{ Productos_Form.marca.errors }}</small>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ Productos_Form.id_cat.id_for_label }}">{{ Productos_Form.id_cat.label }}</label>
+                {{ Productos_Form.id_cat }}
+                {% if Productos_Form.id_cat.errors %}
+                    <small class="text-danger">{{ Productos_Form.id_cat.errors }}</small>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ Productos_Form.stock.id_for_label }}">{{ Productos_Form.stock.label }}</label>
+                {{ Productos_Form.stock }}
+                {% if Productos_Form.stock.errors %}
+                    <small class="text-danger">{{ Productos_Form.stock.errors }}</small>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ Productos_Form.stock_min.id_for_label }}">{{ Productos_Form.stock_min.label }}</label>
+                {{ Productos_Form.stock_min }}
+                {% if Productos_Form.stock_min.errors %}
+                    <small class="text-danger">{{ Productos_Form.stock_min.errors }}</small>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ Productos_Form.stock_max.id_for_label }}">{{ Productos_Form.stock_max.label }}</label>
+                {{ Productos_Form.stock_max }}
+                {% if Productos_Form.stock_max.errors %}
+                    <small class="text-danger">{{ Productos_Form.stock_max.errors }}</small>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ Productos_Form.precio_venta.id_for_label }}">{{ Productos_Form.precio_venta.label }}</label>
+                {{ Productos_Form.precio_venta }}
+                {% if Productos_Form.precio_venta.errors %}
+                    <small class="text-danger">{{ Productos_Form.precio_venta.errors }}</small>
+                {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+        
+        <h2 class="mt-4">Lista de Productos</h2>
+        <table>
+            <thead>
+                <th>Codigo</th>
+                <th>Nombre</th>
+                <th>Marca</th>
+                <th>Categoria</th>
+                <th>Stock</th>
+                <th>Stock Min</th>
+                <th>Stock Max</th>
+                <th>Precio Venta</th>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                    <tr>
+                        <td> {{producto.cod_producto}} </td>
+                        <td> {{producto.nombre}} </td>
+                        <td> {{producto.marca}} </td>
+                        <td> {{producto.id_cat.nombre}} </td>
+                        <td> {{producto.stock}} </td>
+                        <td> {{producto.stock_min}} </td>
+                        <td> {{producto.stock_max}} </td>
+                        <td> {{producto.precio_venta}} </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Incluir los scripts de Bootstrap y jQuery al final del cuerpo -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

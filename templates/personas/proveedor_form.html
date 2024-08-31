@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12 col-md-12">
+            <div class="container m-12">  
+                <div id="estadoFormContainer" style="display: none;">
+                    <div class="container">
+                        <form id="proveedorForm" action="" method="POST">
+                            {% csrf_token %}
+                            {% if error %}
+                                <div class="alert alert-danger">
+                                    <h2>{{ error }}</h2>
+                                </div>
+                            {% endif %}
+                        
+                            <div class="row justify-content-center">
+                                <div class="col-md-8">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            {% if estadoFuncion == 'editar' %}
+                                                <h3 class="mb-0">Editar Proveedor</h3>
+                                            {% else %}
+                                                <h3 class="mb-0">Agregar Proveedor</h3>
+                                            {% endif %}
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-group row">
+                                                <div class="col-md-6">
+                                                    <label for="{{ Proveedor_Form.id_tdoc.id_for_label }}" class="form-label">Tipo de Documento</label>
+                                                    <select name="{{ Proveedor_Form.id_tdoc.name }}" id="{{ Proveedor_Form.id_tdoc.id_for_label }}" class="form-control">
+                                                        {% for tdoc in tdocumentos %}
+                                                            <option value="{{ tdoc.id_tdoc }}" {% if tdoc.id_tdoc == Proveedor_Form.id_tdoc.value %}selected{% endif %}>{{ tdoc.nombre }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="col-md-6">
+                                                    <label for="{{ Proveedor_Form.num_docpro.id_for_label }}" class="form-label">Número de Documento</label>
+                                                    <input type="text" name="{{ Proveedor_Form.num_docpro.name }}" id="{{ Proveedor_Form.num_docpro.id_for_label }}" class="form-control" value="{{ Proveedor_Form.num_docpro.value|default_if_none:'' }}">
+                                                </div>
+                                            </div>
+                                        
+                                            <div class="form-group row">
+                                                <div class="col-md-6">
+                                                    <label for="{{ Proveedor_Form.nombre.id_for_label }}" class="form-label">Nombre</label>
+                                                    <input type="text" name="{{ Proveedor_Form.nombre.name }}" id="{{ Proveedor_Form.nombre.id_for_label }}" class="form-control" value="{{ Proveedor_Form.nombre.value|default_if_none:'' }}">
+                                                </div>
+                                                
+                                                <div class="col-md-6">
+                                                    <label for="{{ Proveedor_Form.email.id_for_label }}" class="form-label">Email</label>
+                                                    <input type="email" name="{{ Proveedor_Form.email.name }}" id="{{ Proveedor_Form.email.id_for_label }}" class="form-control" value="{{ Proveedor_Form.email.value|default_if_none:'' }}">
+                                                </div>
+                                            </div>
+                                        
+                                            <div class="form-group row">
+                                                <div class="col-md-6">
+                                                    <label for="{{ Proveedor_Form.id_tcont.id_for_label }}" class="form-label">Contribuyente</label>
+                                                    <select name="{{ Proveedor_Form.id_tcont.name }}" id="{{ Proveedor_Form.id_tcont.id_for_label }}" class="form-control">
+                                                        {% for tcont in tcontribuyentes %}
+                                                            <option value="{{ tcont.id_tcont }}" {% if tcont.id_tcont == Proveedor_Form.id_tcont.value %}selected{% endif %}>{{ tcont.nombre }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                
+                                                <div class="col-md-6">
+                                                    <label for="{{ Proveedor_Form.telefono.id_for_label }}" class="form-label">Teléfono</label>
+                                                    <input type="text" name="{{ Proveedor_Form.telefono.name }}" id="{{ Proveedor_Form.telefono.id_for_label }}" class="form-control" value="{{ Proveedor_Form.telefono.value|default_if_none:'' }}">
+                                                </div>
+                                            </div>
+                                        
+                                            <div class="form-group row">
+                                                <div class="col-md-12">
+                                                    <label for="{{ Proveedor_Form.id_municipio.id_for_label }}" class="form-label">Municipio</label>
+                                                    <select name="{{ Proveedor_Form.id_municipio.name }}" id="{{ Proveedor_Form.id_municipio.id_for_label }}" class="form-control">
+                                                        {% for municipio in municipios %}
+                                                            <option value="{{ municipio.id_municipio }}" {% if municipio.id_municipio == Proveedor_Form.id_municipio.value %}selected{% endif %}>{{ municipio.nombre }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        
+                                            <div class="form-group">
+                                                <label for="{{ Proveedor_Form.detalles_direccion.id_for_label }}" class="form-label">Detalles de Dirección</label>
+                                                <textarea name="{{ Proveedor_Form.detalles_direccion.name }}" id="{{ Proveedor_Form.detalles_direccion.id_for_label }}" class="form-control" rows="3">{{ Proveedor_Form.detalles_direccion.value|default_if_none:'' }}</textarea>
+                                            </div>
+                                            <div class="form-group text-center">
+                                                <button type="submit" class="btn btn-success">
+                                                    {% if estadoFuncion == 'editar' %}
+                                                        Actualizar
+                                                    {% else %}
+                                                        Guardar
+                                                    {% endif %}
+                                                </button>
+                                                <a href="{% url 'proveedor_create' %}" class="btn btn-secondary">Cancelar</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            
+                <div class="container mt-5">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <h2 class="mb-4">Lista de Proveedores</h2>
+                        </div>
+                        <div class="col-md-2 text-end d-flex align-items-start">
+                            {% if estadoFuncion == 'editar' %}
+                                <a href="{% url 'proveedor_create' %}" class="btn btn-secondary">Nuevo Proveedor</a>
+                            {% elif estadoFuncion == 'crear' %}
+                                <button id="toggleFormButton" class="btn btn-primary mb-3">Agregar Proveedor</button>
+                            {% endif %}
+                        </div> 
+                        <div class="col-md-12">
+                            <table class="table table-striped table-hover" style="font-size: 0.875rem;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 5%; text-align: center;">Cont</th>
+                                        <th style="width: 5%; text-align: center;">Doc</th>
+                                        <th style="width: 10%; text-align: center;">N° Doc</th>
+                                        <th style="width: 15%; text-align: center;">Nombre</th>
+                                        <th style="width: 10%; text-align: center;">Email</th>
+                                        <th style="width: 10%; text-align: center;">Teléfono</th>
+                                        <th style="width: 10%; text-align: center;">Municipio</th>
+                                        <th style="width: 20%; text-align: center;">Dirección</th>
+                                        <th style="width: 15%; text-align: center;">Opciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for proveedor in proveedores %}
+                                        <tr>
+                                            <td style="text-align: center;">{{ proveedor.id_proveedor }}</td>
+                                            <td style="text-align: center;">{{ proveedor.id_tdoc }}</td>
+                                            <td style="text-align: center;">{{ proveedor.num_docpro }}</td>
+                                            <td style="text-align: center;">{{ proveedor.nombre }}</td>
+                                            <td style="text-align: center;">{{ proveedor.email }}</td>
+                                            <td style="text-align: center;">{{ proveedor.telefono }}</td>
+                                            <td style="text-align: center;">{{ proveedor.id_municipio }}</td>
+                                            <td style="text-align: center;">{{ proveedor.detalles_direccion }}</td>
+                                            <td style="text-align: center;">
+                                                <a href="{% url 'proveedor_edit' proveedor.id_proveedor %}" class="btn btn-primary btn-sm" title="Editar Proveedor">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <form action="{% url 'proveedor_delete' %}" method="post" style="display:inline;">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="id_proveedor" value="{{ proveedor.id_proveedor }}">
+                                                    <button type="submit" class="btn btn-danger btn-sm" title="Eliminar Proveedor" onclick="return confirm('¿Estás seguro de que deseas eliminar este Proveedor?');">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="10" style="text-align: center;">No hay proveedores registrados.</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div> 
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const formContainer = document.getElementById('estadoFormContainer');
+      const toggleButton = document.getElementById('toggleFormButton');
+      const editButtons = document.querySelectorAll('.editButton');
+
+      const url = window.location.pathname;
+      if (url.includes('/proveedor/editar/')) {
+          formContainer.style.display = 'block';
+      }
+      if (url.includes('/proveedor/nuevo/')) {
+          formContainer.style.display = 'none';
+      }
+      toggleButton.addEventListener('click', function() {
+          if (formContainer.style.display === 'none' || formContainer.style.display === '') {
+              formContainer.style.display = 'block';
+          } else {
+              formContainer.style.display = 'none';
+          }
+      });
+
+      editButtons.forEach(button => {
+        button.addEventListener('click', function(event) {
+          event.preventDefault();
+          formContainer.style.display = 'block';
+          const id = this.getAttribute('data-id');
+          window.location.href = `{% url 'proveedor_edit' 0 %}`.replace('0', id);
+        });
+      });
+    });
+  </script>
+
+{% endblock %}

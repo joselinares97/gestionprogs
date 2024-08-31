@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Paises en la Base de Datos</title>
+</head>
+<body>
+    <h1>Listado de Paises en la Base de Datos</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for Pais in paises %}
+                <tr>
+                    <td>{{ Pais.id_pais }}</td>
+                    <td>{{ Pais.nombre }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
