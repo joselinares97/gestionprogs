@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h3 class="mb-4">Seleccionar Productos</h3>
+        <div class="mb-4">
+            <input type="text" id="search" class="form-control" placeholder="Buscar productos...">
+        </div>
+        
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Seleccionar</th>
+                    <th>Nombre</th>
+                    <th>Código</th>
+                    <th>Precio</th>
+                </tr>
+            </thead>
+            <tbody id="product-table-body">
+                <!-- Los productos se llenarán aquí mediante jQuery -->
+            </tbody>
+        </table>
+
+        <button class="btn btn-success mt-3" onclick="enviarSeleccion()">Añadir Seleccionados</button>
+    </div>
+
+    <!-- Incluye Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Cargar selecciones previas
+            cargarSeleccionados();
+
+            $('#search').on('input', function() {
+                let query = $(this).val();
+                $.ajax({
+                    url: '{% url "buscar_productos" %}', // Asegúrate de que esta URL sea correcta
+                    data: { 'query': query },
+                    success: function(data) {
+                        let rows = '';
+                        data.forEach(product => {
+                            let checked = '';
+                            if (localStorage.getItem('seleccionados') && localStorage.getItem('seleccionados').includes(product.id_producto.toString())) {
+                                checked = 'checked';
+                            }
+                            rows += `
+                                <tr>
+                                    <td><input type="checkbox" value="${product.id_producto}" class="producto-seleccion" ${checked}></td>
+                                    <td>${product.nombre}</td>
+                                    <td>${product.cod_producto}</td>
+                                    <td>${product.precio_venta}</td>
+                                </tr>
+                            `;
+                        });
+                        $('#product-table-body').html(rows);
+                        // Volver a conectar los eventos
+                        $('.producto-seleccion').on('change', function() {
+                            actualizarSeleccionados($(this).val(), $(this).is(':checked'));
+                        });
+                    }
+                });
+            });
+
+            // Guardar en localStorage cuando un checkbox cambia
+            function actualizarSeleccionados(id, isChecked) {
+                let seleccionados = localStorage.getItem('seleccionados') ? localStorage.getItem('seleccionados').split(',') : [];
+                if (isChecked) {
+                    seleccionados.push(id);
+                } else {
+                    seleccionados = seleccionados.filter(item => item !== id);
+                }
+                localStorage.setItem('seleccionados', seleccionados.join(','));
+            }
+
+            // Cargar la selección al cargar la página
+            function cargarSeleccionados() {
+                let seleccionados = localStorage.getItem('seleccionados') ? localStorage.getItem('seleccionados').split(',') : [];
+                seleccionados.forEach(id => {
+                    $(`input[value="${id}"]`).prop('checked', true);
+                });
+            }
+        });
+
+        function enviarSeleccion() {
+            let seleccionados = localStorage.getItem('seleccionados') ? localStorage.getItem('seleccionados').split(',') : [];
+
+            console.log('Productos seleccionados para enviar:', seleccionados);
+
+            $.ajax({
+                url: '{% url "procesar_seleccion" %}',  // Asegúrate de que esta URL sea correcta
+                method: 'POST',
+                data: {
+                    'seleccionados[]': seleccionados,  // Asegúrate de que el nombre del campo coincida con el de la vista
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    let productos = response.productos;  // Supongamos que recibes los productos completos como respuesta
+
+                    console.log('Respuesta del servidor:', productos);
+
+                    if (window.opener && typeof window.opener.agregarProductosSeleccionados === 'function') {
+                        window.opener.agregarProductosSeleccionados(productos);
+                    } else {
+                        console.error('No se pudo encontrar la función agregarProductosSeleccionados en la ventana principal');
+                    }
+
+                    // Limpiar las selecciones
+                    localStorage.removeItem('seleccionados');
+                    
+                    // Cerrar la ventana actual
+                    window.close();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error en la petición AJAX:', xhr.responseText);
+                }
+            });
+        }
+    </script>
+{% endblock %}

@@ -510,9 +510,115 @@
   background: #555;
 }
 
+/* Estilos de Cotizacion */
+.custom-container {
+    background-color: #f8f9fa; /* Fondo suave */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+}
 
-    
+.custom-title {
+    color: #007bff; /* Color azul */
+    font-weight: bold; /* Texto en negrita */
+}
+.custom-search-group {
+    margin-bottom: 0; /* Elimina el margen inferior para evitar desalineación */
+}
+
+.custom-search-input {
+    border-radius: 4px 0 0 4px; /* Bordes redondeados a la izquierda */
+    flex: 1; /* Asegura que el input ocupe todo el espacio disponible */
+}
+
+.custom-search-icon {
+    background-color: #007bff;
+    color: white;
+    border-radius: 0 4px 4px 0; /* Bordes redondeados a la derecha */
+    border: none;
+    cursor: pointer; /* Cambia el cursor al pasar sobre el icono */
+}
+
+.custom-client-container {
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    height: 70px;
+    overflow-y: auto; /* Muestra la barra de desplazamiento si es necesario */
+}
+
+.custom-client-item {
+    padding: 5px 0;
+}
+
+.custom-client-label {
+    display: inline-block;
+    margin-left: 8px;
+}
+
+.custom-form-row .custom-label {
+    font-weight: 600; /* Hace que las etiquetas sean más destacadas */
+}
+
+.custom-input {
+    border-radius: 4px; /* Bordes redondeados */
+}
+
+/* Alinea verticalmente los elementos en las columnas */
+.d-flex.align-items-center {
+    display: flex;
+    align-items: center;
+}
+
+.custom-client-table {
+    margin-bottom: 0; /* Elimina el margen inferior para evitar desalineación */
+}
+
+/* Ajusta el contenedor de la búsqueda y la tabla para alinear verticalmente */
+.align-items-start {
+    align-items: flex-start !important; /* Fuerza la alineación al inicio del contenedor */
+}
+
+/* Alinea verticalmente los elementos dentro de las columnas */
+.d-flex.align-items-center {
+    display: flex;
+    align-items: center;
+}
+
+
+/* Estilos para las columnas con tamaño fijo */
+.custom-col-select, .custom-col-name, .custom-col-doc, .custom-col-phone {
+    width: 25%; /* Ajusta el porcentaje según la necesidad */
+    text-align: left;
+    white-space: nowrap; /* Evita el ajuste de texto en múltiples líneas */
+    overflow: hidden; /* Oculta el desbordamiento del contenido */
+    text-overflow: ellipsis; /* Muestra puntos suspensivos cuando el texto es demasiado largo */
+}
+
+.custom-col-select {
+    width: 15%; /* Ancho específico para la columna de seleccionar */
+}
+
+.custom-col-name {
+    width: 35%; /* Ancho específico para la columna de nombre */
+}
+
+.custom-col-doc {
+    width: 25%; /* Ancho específico para la columna de documento */
+}
+
+.custom-col-phone {
+    width: 25%; /* Ancho específico para la columna de teléfono */
+}
+
+.option-activa {
+    color: green;
+}
+
+.option-inactiva {
+    color: red;
+}
   </style>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
   <!-- Navbar -->

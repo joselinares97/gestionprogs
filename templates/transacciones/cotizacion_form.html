@@ -1,0 +1,435 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="container mt-5">
+        <h2 class="mb-4">Formulario de Cotización</h2>
+        <form id="cotizacion-form" method="post" onsubmit="enviarCotizacion(); return false;">
+            {% csrf_token %}
+            
+            <!-- Campos del Formulario Principal -->
+            <div class="custom-container p-4">
+            
+            <div class="row mb-4 border border-1 border-dark rounded"  style="padding: 10px;">
+                <div class="col-md-12">
+                    <table class="table custom-client-table mb-0">
+                        <thead>
+                            <tr>
+                                <th colspan="3" class="custom-table-header">
+                                    <div class="custom-search-group input-group w-100">
+                                        <p class="text-primary text-center mb-4 fw-bold bg-light shadow-sm" style="font-size: 1.5rem; margin-top: ;">
+                                            Seleccionar Cliente
+                                        </p>                                                                              
+                                    </div>
+                                </th>
+                                <th colspan="3" class="custom-table-header">
+                                    <div class="custom-search-group input-group w-100">
+                                        <input type="text" id="search" class="form-control custom-search-input" placeholder="Buscar cliente...">
+                                        <span class="input-group-text custom-search-icon"><i class="fas fa-search"></i></span>
+                                    </div>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="custom-col-select">Seleccionar</th>
+                                <th class="custom-col-name">Nombre</th>
+                                <th class="custom-col-doc">Documento</th>
+                                <th class="custom-col-phone">Teléfono</th>
+                            </tr>
+                        </thead>
+                        <tbody id="client-container">
+                            <!-- clientes aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            
+            
+                
+            
+                <div class="row  border border-1 border-dark rounded" style="padding: 10px;">
+                    <p class="text-primary text-lefy mb-4 fw-bold bg-light shadow-sm" style="font-size: 1.5rem; line-height: 1.2;">
+                        Datos de la Cotización
+                    </p> 
+                    <div class="container">
+                        <div class="row mb-4">
+                            <!-- Detalles de cotización -->
+                            <div class="col-md-3">
+                                <label for="{{ cotizacion_form.id_trabajador.id_for_label }}" class="form-label custom-label">Trabajador</label>
+                                {{ cotizacion_form.id_trabajador|attr:"class:form-control custom-input" }}
+                            </div>
+                            <div class="col-md-3">
+                                <label for="{{ cotizacion_form.fecha_emision.id_for_label }}" class="form-label custom-label">Fecha de Emisión</label>
+                                {{ cotizacion_form.fecha_emision|attr:"class:form-control custom-input" }}
+                            </div>
+                            <div class="col-md-3">
+                                <label for="{{ cotizacion_form.fecha_vencimiento.id_for_label }}" class="form-label custom-label">Fecha de Vencimiento</label>
+                                <input type="date" id="{{ cotizacion_form.fecha_vencimiento.id_for_label }}" class="form-control custom-input">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="estado" class="form-label custom-label">Estado</label>
+                                <select id="estado" name="estado" class="form-control custom-input">
+                                    <option value="activa" class="option-activa" selected></i>Activa</option>
+                                    <option value="inactiva" class="option-inactiva">Inactiva</option>
+                                </select>
+                            </div>
+                        </div>
+                    
+                        <div class="row">
+                            <!-- Detalles de totales de la cotización -->
+                            <div class="col-md-4">
+                                <label for="{{ cotizacion_form.iva.id_for_label }}" class="form-label custom-label">Total IVA</label>
+                                {{ cotizacion_form.iva|attr:"class:form-control custom-input" }}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ cotizacion_form.subtotal.id_for_label }}" class="form-label custom-label">SubTotal</label>
+                                <input type="text" class="form-control custom-input">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ cotizacion_form.total.id_for_label }}" class="form-label custom-label">Total</label>
+                                <input type="text" class="form-control custom-input">
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            
+            
+            <!-- Tabla para los Detalles de la Cotización -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 d-flex justify-content-center mb-3">
+                        <button type="button" class="btn btn-primary" onclick="abrirVentanaProductos()">
+                            Seleccionar Productos
+                        </button>
+                    </div>
+                    <div class="col-md-6 d-flex justify-content-center mb-3">
+                        <button type="submit" class="btn btn-success">
+                            Guardar Cotización
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-3 border border-1 border-gray rounded">
+                <div class="col-12">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th colspan="6" class="custom-table-header">
+                                    <div class="custom-search-group input-group w-100">
+                                        <p class="text-primary text-center mb-4 fw-bold bg-light shadow-sm" style="font-size: 1.5rem; line-height: 1.2;">
+                                            Productos
+                                        </p>                                                                              
+                                    </div>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="col-3">Producto</th> <!-- 30% del ancho -->
+                                <th class="col-2">Código</th>    <!-- 20% del ancho -->
+                                <th class="col-2">Precio</th>    <!-- 20% del ancho -->
+                                <th class="col-1">Desct</th> <!-- 10% del ancho -->
+                                <th class="col-1">Desc C/U</th>  <!-- 10% del ancho -->
+                                <th class="col-1">Cant</th>  <!-- 10% del ancho -->
+                                <th class="col-2">Subtotal</th>  <!-- 20% del ancho -->
+                                <th class="col-1">Acciones</th>  <!-- 10% del ancho -->
+                            </tr>
+                        </thead>
+                        <tbody id="productos-list">
+                            <!-- Aquí se agregarán las filas de productos seleccionados -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+                       
+        </form>
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initClienteBusqueda();
+            recalcularSubtotales();
+
+            // Añade eventos de entrada para recalcular subtotal
+            addSubtotalEventListeners();
+            inicializarTabla();
+            setFechaVencimiento();
+        });
+    
+        function abrirVentanaProductos() {
+            const ventana = window.open("{% url 'select_products' %}", "Seleccionar Productos", "width=800,height=600");
+    
+            // Escucha mensajes de la ventana emergente
+            window.addEventListener('message', event => {
+                if (event.origin !== window.location.origin) {
+                    console.error('Mensaje de origen no permitido');
+                    return;
+                }
+                agregarProductosSeleccionados(event.data || []);
+            });
+        }
+    
+        function agregarProductosSeleccionados(productos) {
+    const tbody = document.getElementById('productos-list');
+
+    if (productos.length === 0) {
+        // Crea una fila con el mensaje de "No hay productos"
+        const filaMensaje = document.createElement('tr');
+        filaMensaje.innerHTML = `
+            <td colspan="8" class="text-center">No hay productos disponibles</td>
+        `;
+        tbody.appendChild(filaMensaje);
+    } else {
+        // Agrega los productos a la tabla
+        productos.forEach(producto => {
+            const fila = document.createElement('tr');
+            fila.classList.add('detalle-producto');
+            fila.innerHTML = `
+                <input type="hidden" class="form-control id_producto" value="${producto.id_producto || ''}" readonly>
+                <td><input type="text" class="form-control nombre" value="${producto.nombre || ''}" readonly></td>
+                <td><input type="text" class="form-control cod_producto" value="${producto.cod_producto || ''}" readonly></td>
+                <td><input type="text" class="form-control precio" value="${producto.precio_venta || ''}"></td>
+                <td><input type="number" class="form-control descuento" value="0" min="0" max="100"></td>
+                <td><input type="text" class="form-control subtotal_descuento" value="0.00" readonly></td>
+                <td><input type="number" class="form-control cantidad" value="1" min="1"></td>
+                <td><input type="text" class="form-control subtotal" value="0.00" readonly></td>
+                <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this)">Eliminar</button></td>
+            `;
+            tbody.appendChild(fila);
+            calcularSubtotal(fila.querySelector('.cantidad'));
+        });
+    }
+}
+
+    
+        function recalcularSubtotales() {
+            document.querySelectorAll('.detalle-producto').forEach(row => {
+                calcularSubtotal(row.querySelector('.cantidad'));
+            });
+        }
+    
+        function calcularSubtotal(element) {
+            const row = element.closest('tr');
+            const cantidad = parseFloat(row.querySelector('.cantidad').value) || 0;
+            const precio = parseFloat(row.querySelector('.precio').value) || 0;
+            const descuento = parseFloat(row.querySelector('.descuento').value) || 0;
+
+            const subtotalConDescuento = precio * (1 - descuento / 100);
+            row.querySelector('.subtotal_descuento').value = subtotalConDescuento.toFixed(2);
+
+            const subtotalFinal = subtotalConDescuento * cantidad;
+            row.querySelector('.subtotal').value = subtotalFinal.toFixed(2);
+        }
+
+    
+        function addSubtotalEventListeners() {
+            document.querySelectorAll('.detalle-producto').forEach(row => {
+                row.querySelector('.cantidad').addEventListener('input', (e) => calcularSubtotal(e.target));
+                row.querySelector('.precio').addEventListener('input', (e) => calcularSubtotal(e.target));
+                row.querySelector('.descuento').addEventListener('input', (e) => calcularSubtotal(e.target));
+            });
+        }
+    
+        function eliminarFila(button) {
+            button.closest('tr').remove();
+        }
+    
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+    
+        function enviarCotizacion() {
+            const cotizacionData = {
+                id_cliente: document.getElementById('id_cliente').value,
+                id_trabajador: document.getElementById('id_trabajador').value,
+                fecha_emision: document.getElementById('fecha_emision').value,
+                fecha_vencimiento: document.getElementById('fecha_vencimiento').value,
+                iva: document.getElementById('iva').value,
+                estado: document.getElementById('estado').value,
+                detalles: obtenerDetallesProductos()
+            };
+    
+            fetch('/transacciones/cotizacion/nuevo/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify(cotizacionData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Cotización guardada exitosamente.");
+                } else {
+                    alert("Error al guardar la cotización.");
+                }
+            })
+            .catch(error => {
+                console.error("Error al enviar la cotización:", error);
+                alert("Error de red al guardar la cotización.");
+            });
+        }
+    
+        function obtenerDetallesProductos() {
+            return Array.from(document.querySelectorAll('.detalle-producto')).map(row => ({
+                id_producto: row.querySelector('.id_producto').value,
+                cod_producto: row.querySelector('.cod_producto').value,
+                precio: row.querySelector('.precio').value,
+                descuento: row.querySelector('.descuento').value,
+                cantidad: row.querySelector('.cantidad').value,
+                subtotal_descuento: row.querySelector('.subtotal_descuento').value
+            }));
+        }
+    
+        function initClienteBusqueda() {
+            const searchInput = document.getElementById('search');
+            searchInput.addEventListener('input', () => buscarCliente(searchInput.value));
+
+            document.getElementById('client-container').addEventListener('change', event => {
+                if (event.target.classList.contains('cliente-seleccion')) {
+                    actualizarSeleccionados(event.target.value, event.target.checked);
+                }
+            });
+
+            cargarSeleccionados();
+        }
+
+        function buscarCliente(query) {
+    const clientContainer = document.getElementById('client-container');
+    
+    // Limpia el contenedor si el query no está vacío
+    if (query.trim() === '') {
+        return; // No hacer nada si no hay búsqueda
+    }
+
+    fetch(`/transacciones/buscar_cliente?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            clientContainer.innerHTML = '';  // Limpia el contenedor antes de agregar nuevos resultados
+
+            if (data.length > 0) {
+                data.slice(0, 2).forEach(cliente => {
+                    // Crear una fila (tr) para cada cliente
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>
+                            <input type="radio" name="clienteSeleccionado" value="${cliente.id_cliente}" class="form-check-input cliente-seleccion">
+                        </td>
+                        <td>${cliente.nombre} ${cliente.apellido}</td>
+                        <td>${cliente.n_doccl}</td>
+                        <td>${cliente.telefono}</td>
+                    `;
+                    // Añadir la fila al tbody
+                    clientContainer.appendChild(row);
+
+                    // Añadir evento de clic a la fila
+                    row.addEventListener('click', () => {
+                        const radioButton = row.querySelector('input[type="radio"]');
+                        radioButton.checked = true;
+                    });
+                });
+
+                // Asegúrate de mostrar siempre dos filas
+                if (data.length < 2) {
+                    for (let i = data.length; i < 2; i++) {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td colspan="4">No hay más resultados.</td>
+                        `;
+                        clientContainer.appendChild(row);
+                    }
+                }
+            } else {
+                // Si no hay resultados, mostrar dos filas con un mensaje
+                for (let i = 0; i < 2; i++) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td colspan="4">No se encontraron clientes.</td>
+                    `;
+                    clientContainer.appendChild(row);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error al buscar clientes:', error);
+            clientContainer.innerHTML = '<tr><td colspan="4">Error al buscar clientes.</td></tr>';
+        });
+}
+
+        
+
+function inicializarTabla() {
+    const clientContainer = document.getElementById('client-container');
+    // Inicializa la tabla con dos filas vacías
+    for (let i = 0; i < 2; i++) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td colspan="4">.</td>
+        `;
+        clientContainer.appendChild(row);
+    }
+}
+
+
+
+        document.getElementById('search').addEventListener('input', (event) => {
+            buscarCliente(event.target.value);
+        });
+
+
+        document.addEventListener('DOMContentLoaded', initClienteBusqueda);
+
+        function actualizarSeleccionados(id, isChecked) {
+            let seleccionados = localStorage.getItem('seleccionados') ? localStorage.getItem('seleccionados').split(',') : [];
+            if (isChecked) {
+                seleccionados.push(id);
+            } else {
+                seleccionados = seleccionados.filter(item => item !== id);
+            }
+            localStorage.setItem('seleccionados', seleccionados.join(','));
+        }
+    
+        function cargarSeleccionados() {
+            const seleccionados = localStorage.getItem('seleccionados') ? localStorage.getItem('seleccionados').split(',') : [];
+            seleccionados.forEach(id => {
+                const checkbox = document.querySelector(`input[value="${id}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+        document.addEventListener('input', (event) => {
+            if (event.target.matches('.cantidad, .precio, .descuento')) {
+                calcularSubtotal(event.target);
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+                                const fechaInput = document.getElementById('{{ cotizacion_form.fecha_emision.id_for_label }}');
+                                const today = new Date();
+                                const day = ('0' + today.getDate()).slice(-2);  // Asegura que el día tenga dos dígitos
+                                const month = ('0' + (today.getMonth() + 1)).slice(-2);  // Los meses en JavaScript son de 0 a 11
+                                const year = today.getFullYear();
+                                const formattedDate = `${year}-${month}-${day}`;
+                                fechaInput.value = formattedDate;
+                            });
+                            document.addEventListener('DOMContentLoaded', function() {
+        const fechaEmisionInput = document.getElementById('{{ cotizacion_form.fecha_emision.id_for_label }}');
+        const fechaVencimientoInput = document.getElementById('{{ cotizacion_form.fecha_vencimiento.id_for_label }}');
+        
+        if (fechaEmisionInput && fechaVencimientoInput) {
+            const fechaEmision = new Date(fechaEmisionInput.value);
+            const fechaVencimiento = new Date(fechaEmision);
+            fechaVencimiento.setDate(fechaVencimiento.getDate() + 9);
+            
+            const day = ('0' + fechaVencimiento.getDate()).slice(-2);
+            const month = ('0' + (fechaVencimiento.getMonth() + 1)).slice(-2); // Los meses en JavaScript son de 0 a 11
+            const year = fechaVencimiento.getFullYear();
+            const formattedDate = `${year}-${month}-${day}`;
+            
+            fechaVencimientoInput.value = formattedDate;
+        }
+    });
+    </script>
+{% endblock %}
