@@ -1,55 +1,20 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
+{% load humanize %}
 {% block content %}
-    <div class="container mt-5">
-        <h2 class="mb-4">Formulario de Cotización</h2>
+    <div class="">
         <form id="cotizacion-form" method="post" onsubmit="enviarCotizacion(); return false;">
+            
+        <h2 class="mb-4">Formulario de Cotización</h2>
             {% csrf_token %}
             
             <!-- Campos del Formulario Principal -->
             <div class="custom-container p-4">
-            
-            <div class="row mb-4 border border-1 border-dark rounded"  style="padding: 10px;">
-                <div class="col-md-12">
-                    <table class="table custom-client-table mb-0">
-                        <thead>
-                            <tr>
-                                <th colspan="3" class="custom-table-header">
-                                    <div class="custom-search-group input-group w-100">
-                                        <p class="text-primary text-center mb-4 fw-bold bg-light shadow-sm" style="font-size: 1.5rem; margin-top: ;">
-                                            Seleccionar Cliente
-                                        </p>                                                                              
-                                    </div>
-                                </th>
-                                <th colspan="3" class="custom-table-header">
-                                    <div class="custom-search-group input-group w-100">
-                                        <input type="text" id="search" class="form-control custom-search-input" placeholder="Buscar cliente...">
-                                        <span class="input-group-text custom-search-icon"><i class="fas fa-search"></i></span>
-                                    </div>
-                                </th>
-                            </tr>
-                            <tr>
-                                <th class="custom-col-select">Seleccionar</th>
-                                <th class="custom-col-name">Nombre</th>
-                                <th class="custom-col-doc">Documento</th>
-                                <th class="custom-col-phone">Teléfono</th>
-                            </tr>
-                        </thead>
-                        <tbody id="client-container">
-                            <!-- clientes aquí -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            
-            
-                
-            
-                <div class="row  border border-1 border-dark rounded" style="padding: 10px;">
-                    <p class="text-primary text-lefy mb-4 fw-bold bg-light shadow-sm" style="font-size: 1.5rem; line-height: 1.2;">
+                <!-- Fila para los detalles de la cotización -->
+                <div class="row border border-1 border-dark rounded mb-4" style="padding: 10px;">
+                    <p class="text-primary text-left mb-4 fw-bold bg-light shadow-sm" style="font-size: 1.5rem; line-height: 1.2;">
                         Datos de la Cotización
-                    </p> 
+                    </p>
                     <div class="container">
                         <div class="row mb-4">
                             <!-- Detalles de cotización -->
@@ -68,31 +33,64 @@
                             <div class="col-md-3">
                                 <label for="estado" class="form-label custom-label">Estado</label>
                                 <select id="estado" name="estado" class="form-control custom-input">
-                                    <option value="activa" class="option-activa" selected></i>Activa</option>
+                                    <option value="activa" class="option-activa" selected>Activa</option>
                                     <option value="inactiva" class="option-inactiva">Inactiva</option>
                                 </select>
                             </div>
                         </div>
-                    
-                        <div class="row">
+                        <div class="row mb-4">
                             <!-- Detalles de totales de la cotización -->
                             <div class="col-md-4">
-                                <label for="{{ cotizacion_form.iva.id_for_label }}" class="form-label custom-label">Total IVA</label>
-                                {{ cotizacion_form.iva|attr:"class:form-control custom-input" }}
+                                <label for="id_iva_total" class="form-label custom-label">Total IVA</label>
+                                <input type="text" id="id_iva_total" class="form-control custom-input" readonly>
                             </div>
                             <div class="col-md-4">
-                                <label for="{{ cotizacion_form.subtotal.id_for_label }}" class="form-label custom-label">SubTotal</label>
-                                <input type="text" class="form-control custom-input">
+                                <label for="id_subtotal" class="form-label custom-label">SubTotal</label>
+                                <input type="text" id="id_subtotal" class="form-control custom-input" readonly>
                             </div>
                             <div class="col-md-4">
-                                <label for="{{ cotizacion_form.total.id_for_label }}" class="form-label custom-label">Total</label>
-                                <input type="text" class="form-control custom-input">
-                            </div>
+                                <label for="id_total" class="form-label custom-label">Total</label>
+                                <input type="text" id="id_total" class="form-control custom-input" readonly>
+                            </div>                        
                         </div>
                     </div>
-                    
+                </div>
+                
+                <!-- Fila para la selección de cliente -->
+                <div class="row mb-4 border border-1 border-dark rounded" style="padding: 10px;">
+                    <div class="col-md-12">
+                        <table class="table custom-client-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th colspan="3" class="custom-table-header">
+                                        <div class="custom-search-group input-group w-100">
+                                            <p class="text-primary text-center mb-4 fw-bold bg-light shadow-sm" style="font-size: 1.5rem;">
+                                                Seleccionar Cliente
+                                            </p>
+                                        </div>
+                                    </th>
+                                    <th colspan="3" class="custom-table-header">
+                                        <div class="custom-search-group input-group w-100">
+                                            <input type="text" id="search" class="form-control custom-search-input" placeholder="Buscar cliente...">
+                                            <span class="input-group-text custom-search-icon"><i class="fas fa-search"></i></span>
+                                        </div>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="custom-col-select">Seleccionar</th>
+                                    <th class="custom-col-name">Nombre</th>
+                                    <th class="custom-col-doc">Documento</th>
+                                    <th class="custom-col-phone">Teléfono</th>
+                                </tr>
+                            </thead>
+                            <tbody id="client-container">
+                                <!-- clientes aquí -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+            
             
             
             <!-- Tabla para los Detalles de la Cotización -->
@@ -111,26 +109,26 @@
                 </div>
             </div>
 
-            <div class="row mb-3 border border-1 border-gray rounded">
+            <div class="row mb-3 border border-1 border-gray rounded" style="margin-bottom: 20px;">
                 <div class="col-12">
-                    <table class="table table-striped">
+                    <table class="table table-striped tabla-productos">
                         <thead>
                             <tr>
                                 <th colspan="6" class="custom-table-header">
                                     <div class="custom-search-group input-group w-100">
                                         <p class="text-primary text-center mb-4 fw-bold bg-light shadow-sm" style="font-size: 1.5rem; line-height: 1.2;">
                                             Productos
-                                        </p>                                                                              
+                                        </p>
                                     </div>
                                 </th>
                             </tr>
                             <tr>
-                                <th class="col-3">Producto</th> <!-- 30% del ancho -->
+                                <th class="col-1">Cant</th>  <!-- 10% del ancho -->
                                 <th class="col-2">Código</th>    <!-- 20% del ancho -->
+                                <th class="col-3">Producto</th> <!-- 30% del ancho -->
                                 <th class="col-2">Precio</th>    <!-- 20% del ancho -->
                                 <th class="col-1">Desct</th> <!-- 10% del ancho -->
-                                <th class="col-1">Desc C/U</th>  <!-- 10% del ancho -->
-                                <th class="col-1">Cant</th>  <!-- 10% del ancho -->
+                                <th class="col-1">IVA</th>  <!-- 10% del ancho -->
                                 <th class="col-2">Subtotal</th>  <!-- 20% del ancho -->
                                 <th class="col-1">Acciones</th>  <!-- 10% del ancho -->
                             </tr>
@@ -141,6 +139,10 @@
                     </table>
                 </div>
             </div>
+            
+            <!-- Espaciador adicional para separar del fondo -->
+            <div style="height: 20px;"></div>
+            
             
                        
         </form>
@@ -171,56 +173,124 @@
         }
     
         function agregarProductosSeleccionados(productos) {
-    const tbody = document.getElementById('productos-list');
+            const tbody = document.getElementById('productos-list');
 
-    if (productos.length === 0) {
-        // Crea una fila con el mensaje de "No hay productos"
-        const filaMensaje = document.createElement('tr');
-        filaMensaje.innerHTML = `
-            <td colspan="8" class="text-center">No hay productos disponibles</td>
-        `;
-        tbody.appendChild(filaMensaje);
-    } else {
-        // Agrega los productos a la tabla
-        productos.forEach(producto => {
-            const fila = document.createElement('tr');
-            fila.classList.add('detalle-producto');
-            fila.innerHTML = `
-                <input type="hidden" class="form-control id_producto" value="${producto.id_producto || ''}" readonly>
-                <td><input type="text" class="form-control nombre" value="${producto.nombre || ''}" readonly></td>
-                <td><input type="text" class="form-control cod_producto" value="${producto.cod_producto || ''}" readonly></td>
-                <td><input type="text" class="form-control precio" value="${producto.precio_venta || ''}"></td>
-                <td><input type="number" class="form-control descuento" value="0" min="0" max="100"></td>
-                <td><input type="text" class="form-control subtotal_descuento" value="0.00" readonly></td>
-                <td><input type="number" class="form-control cantidad" value="1" min="1"></td>
-                <td><input type="text" class="form-control subtotal" value="0.00" readonly></td>
-                <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this)">Eliminar</button></td>
-            `;
-            tbody.appendChild(fila);
-            calcularSubtotal(fila.querySelector('.cantidad'));
-        });
-    }
-}
+            if (productos.length === 0) {
+                // Crea una fila con el mensaje de "No hay productos"
+                const filaMensaje = document.createElement('tr');
+                filaMensaje.innerHTML = `
+                    <td colspan="8" class="text-center">No hay productos disponibles</td>
+                `;
+                tbody.appendChild(filaMensaje);
+            } else {
+                // Agrega los productos a la tabla
+                productos.forEach(producto => {
+                    const fila = document.createElement('tr');
+                    fila.classList.add('detalle-producto');
+                    fila.innerHTML = `
+                        <input type="hidden" class="form-control id_producto" value="${producto.id_producto || ''}" readonly>
+                        <td><input type="number" class="form-control cantidad" value="1" min="1"></td>
+                        <td><input type="text" class="form-control cod_producto" value="${producto.cod_producto || ''}" readonly></td>
+                        <td><input type="text" class="form-control nombre" value="${producto.nombre || ''}" readonly></td>
+                        <td><input type="text" class="form-control precio" value="${formatearNumero(producto.precio_venta || 0)}"></td>
+                        <td><input type="number" class="form-control descuento" value="0" min="0" max="100"></td>
+                        <td><select class="form-control iva">
+                                <option value="19">19%</option>
+                                <option value="5">5%</option>
+                                <option value="0">0%</option>
+                            </select></td>
+                        <td><input type="text" class="form-control subtotal" value="${formatearNumero(0)}" readonly></td>
+                        <td><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this)">Eliminar</button></td>
+                    `;
+                    tbody.appendChild(fila);
+                    calcularSubtotal(fila.querySelector('.cantidad'));
+                });
+            }
+        }
 
-    
+        function formatearNumero(num) {
+            return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(num);
+        }
         function recalcularSubtotales() {
             document.querySelectorAll('.detalle-producto').forEach(row => {
                 calcularSubtotal(row.querySelector('.cantidad'));
             });
         }
     
+        function formatearNumero(valor) {
+            // Formatea el número con comas como separadores de miles
+            return valor.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
         function calcularSubtotal(element) {
             const row = element.closest('tr');
             const cantidad = parseFloat(row.querySelector('.cantidad').value) || 0;
-            const precio = parseFloat(row.querySelector('.precio').value) || 0;
+            const precio = parseFloat(row.querySelector('.precio').value.replace(/[^0-9.-]+/g, '')) || 0; 
             const descuento = parseFloat(row.querySelector('.descuento').value) || 0;
+            const ivaPorcentaje = parseFloat(row.querySelector('.iva').value) || 0;
 
-            const subtotalConDescuento = precio * (1 - descuento / 100);
-            row.querySelector('.subtotal_descuento').value = subtotalConDescuento.toFixed(2);
+            // Calcula el subtotal sin IVA y descuento
+            let subtotal = precio * cantidad;
 
-            const subtotalFinal = subtotalConDescuento * cantidad;
-            row.querySelector('.subtotal').value = subtotalFinal.toFixed(2);
+            // Aplica el descuento
+            if (descuento > 0) {
+                subtotal -= subtotal * (descuento / 100);
+            }
+
+            // Calcula el IVA sobre el subtotal
+            const iva = (subtotal * ivaPorcentaje) / 100;
+
+            // Suma el IVA al subtotal
+            const subtotalFinal = subtotal + iva;
+
+            // Actualiza el subtotal en la fila
+            row.querySelector('.subtotal').value = formatearNumero(subtotalFinal);
+
+            // Actualiza los valores totales en tiempo real
+            actualizarTotales();
         }
+        function actualizarTotales() {
+        let totalIva = 0;
+        let totalSubtotal = 0;
+
+        // Recorre todas las filas para sumar subtotales e IVA
+        document.querySelectorAll('tr').forEach(row => {
+            const cantidad = parseFloat(row.querySelector('.cantidad')?.value) || 0;
+            const precio = parseFloat(row.querySelector('.precio')?.value.replace(/[^0-9.-]+/g, '')) || 0;
+            const descuento = parseFloat(row.querySelector('.descuento')?.value) || 0;
+            const ivaPorcentaje = parseFloat(row.querySelector('.iva')?.value) || 0;
+
+            let subtotal = precio * cantidad;
+
+            // Aplica el descuento
+            if (descuento > 0) {
+                subtotal -= subtotal * (descuento / 100);
+            }
+
+            // Calcula y suma el IVA al total de IVA
+            const iva = (subtotal * ivaPorcentaje) / 100;
+            totalIva += iva;
+
+            // Suma el subtotal al total del subtotal
+            totalSubtotal += subtotal;
+        });
+
+        // Calcula el total final (subtotal + total de IVA)
+        const totalFinal = totalSubtotal + totalIva;
+
+        // Actualiza los campos de Totales
+        document.getElementById('id_iva_total').value = formatearNumero(totalIva);
+        document.getElementById('id_subtotal').value = formatearNumero(totalSubtotal);
+        document.getElementById('id_total').value = formatearNumero(totalFinal);
+    }
+
+    // Asigna los eventos a los elementos después de que el DOM haya cargado
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.cantidad, .precio, .descuento, .iva').forEach(element => {
+        element.addEventListener('input', () => calcularSubtotal(element));
+        element.addEventListener('change', () => calcularSubtotal(element));
+    });
+});
 
     
         function addSubtotalEventListeners() {
@@ -229,6 +299,57 @@
                 row.querySelector('.precio').addEventListener('input', (e) => calcularSubtotal(e.target));
                 row.querySelector('.descuento').addEventListener('input', (e) => calcularSubtotal(e.target));
             });
+        }
+
+        function calcularSubtotalProducto(element) {
+            const row = element.closest('tr');
+            const cantidad = parseFloat(row.querySelector('.cantidad').value) || 0;
+            const precio = parseFloat(row.querySelector('.precio').value.replace(/[^0-9.-]+/g, '')) || 0; // Limpia el formato
+            const descuento = parseFloat(row.querySelector('.descuento').value) || 0;
+            const ivaPorcentaje = parseFloat(row.querySelector('.iva').value) || 0;
+
+            let subtotal = precio * cantidad;
+
+            if (descuento > 0) {
+                subtotal -= subtotal * (descuento / 100);
+            }
+
+            const iva = (subtotal * ivaPorcentaje) / 100;
+            const subtotalFinal = subtotal + iva;
+
+            row.querySelector('.subtotal').value = formatearNumero(subtotalFinal);
+
+            // Llama a la función para actualizar los totales globales
+            actualizarTotalesCotizacion();
+        }
+
+        function actualizarTotalesCotizacion() {
+            let subtotalGeneral = 0;
+            let totalIva = 0;
+
+            // Selecciona todas las filas de productos
+            document.querySelectorAll('tr').forEach(row => {
+                const cantidad = parseFloat(row.querySelector('.cantidad').value) || 0;
+                const precio = parseFloat(row.querySelector('.precio').value.replace(/[^0-9.-]+/g, '')) || 0;
+                const descuento = parseFloat(row.querySelector('.descuento').value) || 0;
+                const ivaPorcentaje = parseFloat(row.querySelector('.iva').value) || 0;
+
+                let subtotal = precio * cantidad;
+
+                if (descuento > 0) {
+                    subtotal -= subtotal * (descuento / 100);
+                }
+
+                subtotalGeneral += subtotal;
+                totalIva += (subtotal * ivaPorcentaje) / 100;
+            });
+
+            const totalGeneral = subtotalGeneral + totalIva;
+
+            // Actualiza los campos del formulario con los totales calculados
+            document.querySelector('#id_iva_total').value = formatearNumero(totalIva); // Total IVA
+            document.querySelector('#id_subtotal').value = formatearNumero(subtotalGeneral); // SubTotal
+            document.querySelector('#id_total').value = formatearNumero(totalGeneral); // Total
         }
     
         function eliminarFila(button) {
@@ -299,9 +420,21 @@
         function buscarCliente(query) {
     const clientContainer = document.getElementById('client-container');
     
-    // Limpia el contenedor si el query no está vacío
+    // Si el query está vacío, muestra el botón de crear cliente
     if (query.trim() === '') {
-        return; // No hacer nada si no hay búsqueda
+        clientContainer.innerHTML = `
+            <tr>
+                <td colspan="4">
+                    <a href="{% url 'cliente_create' %}" target="_blank" class="btn btn-primary">Crear Cliente</a>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <a href="{% url 'cliente_create' %}" target="_blank" class="btn btn-primary">Crear Cliente</a>
+                </td>
+            </tr>   
+        `;
+        return; // No hacer nada más
     }
 
     fetch(`/transacciones/buscar_cliente?q=${query}`)
@@ -336,17 +469,21 @@
                     for (let i = data.length; i < 2; i++) {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td colspan="4">No hay más resultados.</td>
+                            <td colspan="4">
+                                <a href="{% url 'cliente_create' %}" target="_blank" class="btn btn-primary">Crear Cliente</a>
+                            </td>
                         `;
                         clientContainer.appendChild(row);
                     }
                 }
             } else {
-                // Si no hay resultados, mostrar dos filas con un mensaje
+                // Si no hay resultados, mostrar dos filas con el botón de crear cliente
                 for (let i = 0; i < 2; i++) {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td colspan="4">No se encontraron clientes.</td>
+                        <td colspan="4">
+                            <a href="{% url 'cliente_create' %}" target="_blank" class="btn btn-primary">Crear Cliente</a>
+                        </td>
                     `;
                     clientContainer.appendChild(row);
                 }
@@ -354,7 +491,13 @@
         })
         .catch(error => {
             console.error('Error al buscar clientes:', error);
-            clientContainer.innerHTML = '<tr><td colspan="4">Error al buscar clientes.</td></tr>';
+            clientContainer.innerHTML = `
+                <tr>
+                    <td colspan="4">
+                        <a href="{% url 'cliente_create' %}" target="_blank" class="btn btn-primary">Crear Cliente</a>
+                    </td>
+                </tr>
+            `;
         });
 }
 
@@ -366,7 +509,9 @@ function inicializarTabla() {
     for (let i = 0; i < 2; i++) {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td colspan="4">.</td>
+            <td colspan="4">
+                <a href="{% url 'cliente_create' %}" target="_blank" class="btn btn-primary">Crear Cliente</a>
+            </td>
         `;
         clientContainer.appendChild(row);
     }

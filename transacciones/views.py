@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 import json
+from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
 from django.urls import reverse
@@ -213,16 +214,21 @@ def buscar_cliente(request):
     query = request.GET.get('q', '')
     
     if query:
-        clientes = Cliente.objects.filter(
-            n_doccl__icontains=query
-        ) | Cliente.objects.filter(
-            nombre__icontains=query
-        )
+        # Divide el query en partes usando espacio como delimitador
+        partes_query = query.split()
+        
+        # Construye el filtro dinámicamente
+        filtros = Q()
+        for parte in partes_query:
+            filtros &= (Q(nombre__icontains=parte) | Q(apellido__icontains=parte) | Q(n_doccl__icontains=parte))
+        
+        clientes = Cliente.objects.filter(filtros)
     else:
         clientes = Cliente.objects.none()  # Si no hay query, no devolver ningún cliente
 
     data = list(clientes.values('id_cliente', 'nombre', 'apellido', 'telefono', 'n_doccl'))
     return JsonResponse(data, safe=False)
+
 
 
 

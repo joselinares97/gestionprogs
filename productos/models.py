@@ -22,5 +22,5 @@ class Productos(models.Model):
     precio_venta = models.DecimalField(db_column='precio_Venta', max_digits=10, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'productos'

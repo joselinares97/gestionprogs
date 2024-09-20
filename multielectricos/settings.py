@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8l%#sz(2eau#m-8dv$yntztjmi*c(9p_ahpaq-9od@cxm8(9=-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['proyectomultielectricosgs.onrender.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -81,27 +81,18 @@ WSGI_APPLICATION = 'multielectricos.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
-        'PORT': os.getenv('DATABASE_PORT', '3306'),
+       'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'MultielectricosGS',
+        'USER': 'root',
+        'PASSWORD': '5374008',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
-
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.mysql',
-#        'NAME': 'MultielectricosGS',
-#        'USER': 'root',
-#        'PASSWORD': '5374008',
-#        'HOST': '127.0.0.1',
-#        'PORT': '3306',
-#    }
-#}
 
 
 # Password validation

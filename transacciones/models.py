@@ -34,7 +34,7 @@ class Cotizacion(models.Model):
     estado = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'cotizacion'
 
         
@@ -72,11 +72,11 @@ class Inventario(models.Model):
 
 class DetallesCotizacion(models.Model):
     id_dcotizacion = models.AutoField(primary_key=True)
-    id_cotizacion = models.ForeignKey(Cotizacion, on_delete=models.DO_NOTHING, db_column='Id_Cotizacion', blank=True, null=True)
-    id_producto = models.ForeignKey(Productos, on_delete=models.DO_NOTHING, db_column='Id_Producto', blank=True, null=True)
-    cantidad = models.IntegerField(db_column='Cantidad', blank=True, null=True)
-    subtotal_prodc = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-
+    id_cotizacion = models.ForeignKey(Cotizacion, on_delete=models.CASCADE)
+    id_producto = models.ForeignKey(Productos, on_delete=models.CASCADE)  # Relación con Productos
+    cantidad = models.IntegerField()
+    subtotal_prodc = models.DecimalField(max_digits=10, decimal_places=2)
+    
     class Meta:
         managed = False
         db_table = 'detalles_cotizacion'

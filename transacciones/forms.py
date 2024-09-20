@@ -1,4 +1,5 @@
 from django import forms
+from productos.models import Productos
 from .models import MedioPago, FormaPago, Cotizacion, Proforma, Inventario, DetallesCotizacion, DetallesProforma
 
 class MedioPagoForm(forms.ModelForm):
@@ -63,7 +64,7 @@ class InventarioForm(forms.ModelForm):
 
 class DetallesCotizacionForm(forms.ModelForm):
     class Meta:
-        model = DetallesCotizacion
+        model = DetallesCotizacion 
         fields = ['id_dcotizacion', 'id_cotizacion', 'id_producto', 'cantidad', 'subtotal_prodc']
         widgets = {
             'id_cotizacion': forms.Select(attrs={'class': 'form-control'}),
@@ -71,6 +72,8 @@ class DetallesCotizacionForm(forms.ModelForm):
             'cantidad': forms.NumberInput(attrs={'class': 'form-control'}),
             'subtotal_prodc': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+
+
 
 class DetallesProformaForm(forms.ModelForm):
     class Meta:

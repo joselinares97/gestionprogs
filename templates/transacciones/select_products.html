@@ -100,20 +100,27 @@
 
                     if (window.opener && typeof window.opener.agregarProductosSeleccionados === 'function') {
                         window.opener.agregarProductosSeleccionados(productos);
+                        localStorage.removeItem('seleccionados');
+                        
+                        // Mensaje de depuración antes de cerrar la ventana
+                        console.log('Cerrando la ventana actual...');
+                        
+                        // Intentar cerrar la ventana
+                        window.close();
                     } else {
                         console.error('No se pudo encontrar la función agregarProductosSeleccionados en la ventana principal');
                     }
 
-                    // Limpiar las selecciones
-                    localStorage.removeItem('seleccionados');
-                    
-                    // Cerrar la ventana actual
-                    window.close();
+                    // Limpiar las selecciones si la ventana no se cerró
+                    if (window.closed) {
+                        localStorage.removeItem('seleccionados');
+                    }
                 },
                 error: function(xhr, status, error) {
                     console.error('Error en la petición AJAX:', xhr.responseText);
                 }
             });
         }
+
     </script>
 {% endblock %}
