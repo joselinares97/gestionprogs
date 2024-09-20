@@ -104,7 +104,3 @@ Si deseas contribuir al proyecto, sigue estos pasos:
 - Automatización del descuento de stock al generar una factura.
 - Implementación de alertas para stock mínimo.
 - Creación de documentación técnica y guía de usuario.
-
-## Licencia
-
-Este proyecto está licenciado bajo los términos de la licencia MIT.
