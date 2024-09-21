@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8l%#sz(2eau#m-8dv$yntztjmi*c(9p_ahpaq-9od@cxm8(9=-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.railway.app']
 
 
 # Application definition
@@ -85,14 +85,15 @@ WSGI_APPLICATION = 'multielectricos.wsgi.application'
 
 DATABASES = {
     'default': {
-       'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'MultielectricosGS',
-        'USER': 'root',
-        'PASSWORD': '5374008',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('MYSQLDATABASE'),
+        'USER': os.environ.get('MYSQLUSER'),
+        'PASSWORD': os.environ.get('MYSQLPASSWORD'),
+        'HOST': os.environ.get('MYSQLHOST'),
+        'PORT': os.environ.get('MYSQLPORT', '3306'),
     }
 }
+
 
 
 # Password validation
