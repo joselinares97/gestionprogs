@@ -86,11 +86,11 @@ WSGI_APPLICATION = 'multielectricos.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('MYSQLDATABASE'),
-        'USER': os.environ.get('MYSQLUSER'),
-        'PASSWORD': os.environ.get('MYSQLPASSWORD'),
-        'HOST': os.environ.get('MYSQLHOST'),
-        'PORT': os.environ.get('MYSQLPORT', '3306'),
+        'NAME': 'railway',
+        'USER': 'root',
+        'PASSWORD': 'doHasNVSKVDyplZkIYyxCLXlIgRhszxx',
+        'HOST': 'mysql.railway.internal',
+        'PORT': '3306',
     }
 }
 
